@@ -92,3 +92,11 @@ func Unzip(archive []byte, target string) error {
 
 	return nil
 }
+
+// func Asset(path string) ([]byte, error)  {
+// 	fileBytes, err := os.ReadFile(path)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return fileBytes, nil
+// }

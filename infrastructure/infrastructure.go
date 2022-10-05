@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/compassion-technology/goad/goad/types"
-	"github.com/compassion-technology/goad/result"
+	"github.com/ujwalparker/goad/goad/types"
+	"github.com/ujwalparker/goad/result"
 )
 
 const DefaultRunnerAsset = "data/lambda.zip"
@@ -50,6 +50,7 @@ func InvokeLambdas(inf Infrastructure) {
 			fmt.Sprintf("--method=%s", t.Method),
 			fmt.Sprintf("--runner-id=%d", currentID),
 			fmt.Sprintf("--body=%s", t.Body),
+			fmt.Sprintf("--graphql=%s", t.GraphQL),
 		}
 		currentID++
 		for _, v := range t.Headers {

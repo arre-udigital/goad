@@ -1,4 +1,4 @@
-module github.com/compassion-technology/goad
+module github.com/ujwalparker/goad
 
 go 1.17
 

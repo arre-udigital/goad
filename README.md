@@ -1,4 +1,4 @@
-# Goad (Revived)
+# Goad
 
 All credit goes to the [original Goad project](https://github.com/goadapp/goad). 
 
@@ -11,16 +11,28 @@ The instructions below were written with Go 1.17.
 1. Fetch the project with `go get`:
 
   ```sh
-  go get github.com/compassion-technology/goad
+  go get github.com/ujwalparker/goad
   ```
 
-2. Build for all supported platforms:
+2. Init dep `go mod tidy`:
+
+  ```sh
+  go mod tidy
+  ```
+
+3. To sync the vendor directory `go mod vendor`:
+
+  ```sh
+  go mod vendor
+  ```
+
+4. Build for all supported platforms:
 
   ```sh
   make
   ```
 
-3. You’ll find the `goad` binary in the `build` directory.
+7. You’ll find the `goad` binary in the `build` directory.
 
 
 ## License & Copyright

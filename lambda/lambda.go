@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -23,9 +22,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/aws/aws-sdk-go/service/lambda/lambdaiface"
-	"github.com/compassion-technology/goad/api"
-	"github.com/compassion-technology/goad/infrastructure/aws/sqsadapter"
-	"github.com/compassion-technology/goad/version"
+	"github.com/ujwalparker/goad/api"
+	"github.com/ujwalparker/goad/infrastructure/aws/sqsadapter"
+	"github.com/ujwalparker/goad/version"
 	"github.com/streadway/amqp"
 )
 
@@ -36,6 +35,7 @@ var (
 	requestMethod  = app.Flag("method", "HTTP method").Short('m').Default("GET").String()
 	requestBody    = app.Flag("body", "HTTP request body").Short('b').String()
 	requestHeaders = app.Flag("header", "List of headers").Short('H').Strings()
+	graphql  	   = app.Flag("graphql", "Use GraphQL endpoint").Default("true").String()
 
 	awsRegion   = app.Flag("aws-region", "AWS region to run in").Short('r').String()
 	queueRegion = app.Flag("queue-region", "SQS queue region").Short('q').String()
@@ -69,6 +69,7 @@ func parseLambdaSettings() LambdaSettings {
 		RequestHeaders: *requestHeaders,
 		RequestMethod:  *requestMethod,
 		RequestBody:    *requestBody,
+		GraphQL:    	*graphql,
 	}
 
 	lambdaSettings := LambdaSettings{
@@ -122,6 +123,7 @@ type requestParameters struct {
 	RequestMethod  string
 	RequestBody    string
 	RequestHeaders []string
+	GraphQL		   string
 }
 
 type requestResult struct {
@@ -355,7 +357,9 @@ func fetch(client *http.Client, p requestParameters, loadTestStartTime time.Time
 	start := time.Now()
 	req := prepareHttpRequest(p)
 	response, err := client.Do(req)
-
+	if err != nil {
+		fmt.Println(err)
+	}
 	var status string
 	var elapsedFirstByte time.Duration
 	var elapsedLastByte time.Duration
@@ -396,6 +400,9 @@ func fetch(client *http.Client, p requestParameters, loadTestStartTime time.Time
 			if firstByteRead {
 				bytesRead = len(body) + 1
 			}
+			
+			fmt.Printf("%s", body)
+
 			elapsedLastByte = time.Since(start)
 			if err != nil {
 				// todo: detect timeout here as well
@@ -429,24 +436,51 @@ func fetch(client *http.Client, p requestParameters, loadTestStartTime time.Time
 }
 
 func prepareHttpRequest(params requestParameters) *http.Request {
-	req, err := http.NewRequest(params.RequestMethod, params.URL, bytes.NewBufferString(params.RequestBody))
+	graphql, graphqlErr := strconv.ParseBool(params.GraphQL)
+	if graphqlErr != nil {
+		graphql = false
+	}
+
+	var requestReader *strings.Reader
+	if graphql == true {
+		graphqlQuery := map[string]string{
+			"query": params.RequestBody,
+		}
+		requestBody, _ := json.Marshal(graphqlQuery)
+
+		// fmt.Println(string(requestBody))
+		
+		requestReader = strings.NewReader(string(requestBody))
+	} else {
+		requestReader = strings.NewReader(params.RequestBody)
+	}
+
+	req, err := http.NewRequest(params.RequestMethod, params.URL, requestReader)
 	if err != nil {
 		fmt.Println("Error creating the HTTP request:", err)
 		panic("")
 	}
-	req.Header.Add("Accept-Encoding", "gzip")
 	for _, v := range params.RequestHeaders {
 		header := strings.Split(v, ":")
 		if strings.ToLower(strings.Trim(header[0], " ")) == "host" {
 			req.Host = strings.Trim(header[1], " ")
+			req.Header.Add(strings.Trim(header[0], " "), strings.Trim(header[1], " "))
 		} else {
 			req.Header.Add(strings.Trim(header[0], " "), strings.Trim(header[1], " "))
 		}
 	}
-
 	if req.Header.Get("User-Agent") == "" {
 		req.Header.Add("User-Agent", "Mozilla/5.0 (compatible; Goad/1.0; +https://goad.io)")
 	}
+	req.Header.Add("Content-Length", strconv.FormatInt(requestReader.Size(), 10))
+	req.Header.Add("Accept-Encoding", "gzip")
+
+	// for name, values := range req.Header {
+	// 	for _, value := range values {
+	// 		fmt.Println(name, value)
+	// 	}
+	// }
+
 	return req
 }
 
@@ -579,6 +613,7 @@ func (l *goadLambda) getInvokeArgsForFork() invokeArgs {
 		fmt.Sprintf("--aws-region=%s", settings.LambdaRegion),
 		fmt.Sprintf("--method=%s", settings.RequestParameters.RequestMethod),
 		fmt.Sprintf("--body=%s", settings.RequestParameters.RequestBody),
+		fmt.Sprintf("--graphql=%s",  settings.RequestParameters.GraphQL),
 	}
 	args.Flags = append(args.Flags, fmt.Sprintf("%s", params.URL))
 	fmt.Println(args.Flags)

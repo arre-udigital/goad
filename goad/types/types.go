@@ -36,6 +36,7 @@ type TestConfig struct {
 	Regions     []string
 	Method      string
 	Body        string
+	GraphQL     string
 	Headers     []string
 	Output      string
 	Settings    string

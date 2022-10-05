@@ -5,8 +5,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/compassion-technology/goad/api"
-	"github.com/compassion-technology/goad/goad/util"
+	"github.com/ujwalparker/goad/api"
+	"github.com/ujwalparker/goad/goad/util"
 )
 
 // AggData type

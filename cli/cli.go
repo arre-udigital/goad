@@ -19,10 +19,10 @@ import (
 	ini "gopkg.in/ini.v1"
 
 	"github.com/dustin/go-humanize"
-	"github.com/compassion-technology/goad/goad"
-	"github.com/compassion-technology/goad/goad/types"
-	"github.com/compassion-technology/goad/result"
-	"github.com/compassion-technology/goad/version"
+	"github.com/ujwalparker/goad/goad"
+	"github.com/ujwalparker/goad/goad/types"
+	"github.com/ujwalparker/goad/result"
+	"github.com/ujwalparker/goad/version"
 	"github.com/nsf/termbox-go"
 )
 
@@ -33,6 +33,7 @@ const (
 	urlKey         = "url"
 	methodKey      = "method"
 	bodyKey        = "body"
+	graphqlKey     = "graphql"
 	concurrencyKey = "concurrency"
 	requestsKey    = "requests"
 	timelimitKey   = "timelimit"
@@ -63,6 +64,8 @@ var (
 	method          = methodFlag.String()
 	bodyFlag        = app.Flag(bodyKey, "HTTP request body\n\n")
 	body            = bodyFlag.String()
+	graphqlFlag     = app.Flag(graphqlKey, "Using GraphQL endpoint\n\n").Default("true")
+	graphql         = graphqlFlag.String()
 	outputFileFlag  = app.Flag(jsonOutputKey, "Optional path to file for JSON result storage")
 	outputFile      = outputFileFlag.String()
 	regionsFlag     = app.Flag(regionKey, "AWS regions to run in. Repeat flag to run in more then one region. (repeatable)")
@@ -114,6 +117,9 @@ func aggregateConfiguration() *types.TestConfig {
 
 func applyDefaultsFromConfig(config *types.TestConfig) {
 	applyDefaultIfNotZero(bodyFlag, config.Body)
+	if config.GraphQL != "" {
+		urlArg.Default("false")
+	}
 	applyDefaultIfNotZero(concurrencyFlag, prepareInt(config.Concurrency))
 	applyDefaultIfNotZero(headersFlag, config.Headers)
 	applyDefaultIfNotZero(methodFlag, config.Method)
@@ -204,6 +210,8 @@ func parseSettings() *types.TestConfig {
 	config.URL = generalSection.Key(urlKey).String()
 	config.Method = generalSection.Key(methodKey).String()
 	config.Body = generalSection.Key(bodyKey).String()
+	config.Output = generalSection.Key(jsonOutputKey).String()
+	config.GraphQL = generalSection.Key(graphqlKey).String()
 	config.Concurrency, _ = generalSection.Key(concurrencyKey).Int()
 	config.Requests, _ = generalSection.Key(requestsKey).Int()
 	config.Timelimit, _ = generalSection.Key(timelimitKey).Int()
@@ -269,6 +277,7 @@ func parseCommandline() *types.TestConfig {
 	config.Regions = regionsArray
 	config.Method = *method
 	config.Body = *body
+	config.GraphQL = *graphql
 	config.Headers = *headers
 	config.Output = *outputFile
 	config.RunDocker = *runDocker

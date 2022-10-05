@@ -1,11 +1,11 @@
 package goad
 
 import (
-	"github.com/compassion-technology/goad/goad/types"
-	"github.com/compassion-technology/goad/infrastructure"
-	"github.com/compassion-technology/goad/infrastructure/aws"
-	"github.com/compassion-technology/goad/infrastructure/docker"
-	"github.com/compassion-technology/goad/result"
+	"github.com/ujwalparker/goad/goad/types"
+	"github.com/ujwalparker/goad/infrastructure"
+	"github.com/ujwalparker/goad/infrastructure/aws"
+	"github.com/ujwalparker/goad/infrastructure/docker"
+	"github.com/ujwalparker/goad/result"
 )
 
 // Start a test

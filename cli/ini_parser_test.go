@@ -7,7 +7,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/compassion-technology/goad/goad/types"
+	"github.com/ujwalparker/goad/goad/types"
 	"github.com/stretchr/testify/assert"
 )
 
