@@ -4,7 +4,7 @@ language: go
 go_import_path: github.com/ujwalparker/goad
 
 go:
-  - 1.8
+  - 1.19.2
 
 before_install:
   - echo 'deb http://archive.ubuntu.com/ubuntu/ xenial main universe' | sudo tee -a /etc/apt/sources.list

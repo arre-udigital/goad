@@ -6,7 +6,7 @@ This fork contains pretty much just the changes necessary to allow it to easily 
 
 # Building
 
-The instructions below were written with Go 1.17.
+The instructions below were written with Go 1.19.
 
 1. Fetch the project with `go get`:
 
@@ -14,7 +14,7 @@ The instructions below were written with Go 1.17.
   go get github.com/ujwalparker/goad
   ```
 
-2. Init dep `go mod tidy`:
+2. Tidy dependencies dep `go mod tidy`:
 
   ```sh
   go mod tidy

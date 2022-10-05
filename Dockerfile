@@ -1,4 +1,4 @@
-FROM golang:1.17.13-stretch
+FROM golang:1.19.2-stretch
 
 RUN apt-get update
 RUN apt-get install -y zip

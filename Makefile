@@ -11,7 +11,7 @@ GOPATH := $(VENDOR-PATH):${GOPATH}
 export GOPATH
 
 # These will be provided to the target
-VERSION := 2.0.0-rc1x
+VERSION := 3.0.0
 BUILD := `git rev-parse HEAD`
 
 # Timestamp of last commit to allow for reproducable builds
