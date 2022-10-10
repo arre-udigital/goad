@@ -1,15 +1,22 @@
-# [Migrated to GitHub Action build via go 1.19.2](https://github.com/ujwalparker/goad/releases/tag/v3.0.0)
+# [Modified AWS regions](https://github.com/ujwalparker/goad/releases/tag/v3.0.1)
 
-The original Goad project has been archived and the tool still holds relevance today. This fork builds on the extensive work done by [chrisaljoudi](https://github.com/chrisaljoudi) with [compassion-technology/goad](https://github.com/compassion-technology/goad) in which most of the dependencies were resolved 
+Added supported AWS region to deploy Lambda
 
 # Changes included:
 
-- Update to node 16.x lambda runtime
-	- Updated to Go 1.19.2
+- Added AWS region
+	- "ap-south-1" - Mumbai
 	- Added GraphQL endpoint request capability
 	- Added GitHub action build
 	- Updated dependencies' 
 	
-- Updates from [compassion-technology/goad](https://github.com/compassion-technology/goad) 
-	- Migrating to Go Modules, vendor sync
-	- Use maintained go-bindata as non-module dep, update Docker base image
+- Removed AWS region
+	- "us-east-1" - N. Virginia
+	- "sa-east-1" - Sao Paulo
+	- "us-east-2" - Ohio
+	- "us-west-1" - N.California
+	- "us-west-2" - Oregon
+	- "eu-west-1" - Ireland
+	- "eu-central-1" - Frankfurt
+	- "ap-northeast-1" - Tokyo
+	- "ap-southeast-2" - Sydney
